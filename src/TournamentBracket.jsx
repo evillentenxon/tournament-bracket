@@ -1,10 +1,11 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 function TournamentBracket() {
     const [input, setInput] = useState(8); // Default number of teams
     const [visible, setVisible] = useState(false);
     const [error, setError] = useState('');
+    const [players, setPlayers] = useState([]); // Store player data
 
     const handleClick = () => {
         if (input > 1 && (input & (input - 1)) === 0) {
@@ -34,19 +35,18 @@ function TournamentBracket() {
         fetch('/players.json')
             .then((response) => response.json())
             .then((data) => {
-                console.log('Number of players:', data.length); // Logs the number of items in the JSON array
-                setInput(data.length);
+                setPlayers(data); // Store player data
+                setInput(data.length); // Set the number of participants to the number of players
             })
             .catch((err) => console.error('Error loading players:', err));
     }, []);
-    
 
     return (
         <Div>
             <div className="centered">
                 <label>
-                    Enter number of teams:
-                    <input type="number" value={input} />
+                    Number of teams:
+                    <input type="number" value={input} readOnly />
                 </label>
                 <button onClick={handleClick}>See Brackets</button>
                 {error && <p className="error">{error}</p>}
@@ -55,9 +55,19 @@ function TournamentBracket() {
                 <div className="brackets">
                     {rounds.map((round, roundIndex) => (
                         <div key={roundIndex} className="column">
-                            {Array.from({ length: round }, (_, i) => (
-                                <input key={`${roundIndex}-${i}`} />
-                            ))}
+                            {/* First column: Display player names */}
+                            {roundIndex === 0
+                                ? Array.from({ length: round }, (_, i) => (
+                                      <input
+                                          key={`${roundIndex}-${i}`}
+                                          value={players[i]?.name || ''} // Display player name or leave blank if not available
+                                          readOnly
+                                      />
+                                  ))
+                                : // Other columns: Empty input boxes
+                                  Array.from({ length: round }, (_, i) => (
+                                      <input key={`${roundIndex}-${i}`} />
+                                  ))}
                         </div>
                     ))}
                 </div>
@@ -68,43 +78,28 @@ function TournamentBracket() {
 
 export default TournamentBracket;
 
+// Styled Components (Optional, for styling purposes)
 const Div = styled.div`
-  .centered {
-    text-align: center;
-    margin-bottom: 20px;
-
-    label {
-      margin-right: 10px;
+    .centered {
+        text-align: center;
+        margin-bottom: 20px;
     }
-
-    input {
-      width: 60px;
-      text-align: center;
+    .error {
+        color: red;
     }
-  }
-
-  .brackets {
-    display: flex;
-    gap: 100px; /* Adjust spacing between columns */
-    position: relative;
-
+    .brackets {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
     .column {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly; /* Evenly space inputs in the column */
-      gap: 10px; /* Fine-tune spacing between inputs */
-      height: auto; /* Allow dynamic height based on content */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: space-evenly;
     }
-
     input {
-      width: 100px;
-      text-align: center;
+        padding: 5px;
+        text-align: center;
     }
-  }
-
-  .error {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-  }
 `;
