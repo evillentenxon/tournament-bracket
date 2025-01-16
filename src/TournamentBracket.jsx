@@ -18,7 +18,6 @@ function TournamentBracket() {
     };
 
     const handleClick = () => {
-        // if (input > 1 && (input & (input - 1)) === 0) {
         if (input > 1) {
             setError('');
             setVisible(true);
@@ -31,7 +30,6 @@ function TournamentBracket() {
     const handleShuffle = () => {
         const shuffled = shufflePlayers(players);
         setPlayers(shuffled);
-        console.log('Players shuffled:', shuffled);
     };
 
     const generateBrackets = (participants) => {
@@ -49,11 +47,11 @@ function TournamentBracket() {
     const rounds = generateBrackets(input);
 
     useEffect(() => {
-        fetch('/players.json')
+        fetch('http://localhost:4000/tour/tournament/678663b4c160c4d169a0bce9/fetchPaticipants')
             .then((response) => response.json())
             .then((data) => {
-                setPlayers(data);
-                setInput(data.length);
+                setPlayers(data.participants); // Assuming the API response has a 'participants' key
+                setInput(data.participants.length); // Set input to the number of players
             })
             .catch((err) => console.error('Error loading players:', err));
     }, []);
@@ -62,8 +60,7 @@ function TournamentBracket() {
         <Div>
             <div className="centered">
                 <label>
-                    <h1>Number of players:{input}</h1>
-                    
+                    <h1>Number of players: {input}</h1>
                 </label>
                 <button onClick={handleClick}>See Brackets</button>
 
@@ -78,7 +75,7 @@ function TournamentBracket() {
                                 ? Array.from({ length: round }, (_, i) => (
                                     <input
                                         key={`${roundIndex}-${i}`}
-                                        value={players[i]?.name || ''} // Display player name or leave blank if not available
+                                        value={players[i]?.username || ''} // Display player username or leave blank if not available
                                         readOnly
                                     />
                                 ))
