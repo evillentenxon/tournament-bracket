@@ -1,23 +1,23 @@
 [
     {
       "id": 1,
-      "name": "John Doe"
+      "name": "roman gautam"
     },
     {
       "id": 2,
-      "name": "Jane Smith"
+      "name": "pratima shrestha"
     },
     {
       "id": 3,
-      "name": "Alex Johnson"
+      "name": "pratyush pokharel"
     },
     {
       "id": 4,
-      "name": "Emily Brown"
+      "name": "awan karki"
     },
     {
       "id": 5,
-      "name": "Michael Davis"
+      "name": "saksham poudel"
     },
     {
       "id": 6,
@@ -26,10 +26,6 @@
     {
       "id": 7,
       "name": "Chris Martinez"
-    },
-    {
-      "id": 8,
-      "name": "Ashley Taylor"
     }
   ]
   

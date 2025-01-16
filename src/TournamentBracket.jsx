@@ -7,14 +7,31 @@ function TournamentBracket() {
     const [error, setError] = useState('');
     const [players, setPlayers] = useState([]); // Store player data
 
+    // Shuffle function using Fisher-Yates algorithm
+    const shufflePlayers = (array) => {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    };
+
     const handleClick = () => {
-        if (input > 1 && (input & (input - 1)) === 0) {
+        // if (input > 1 && (input & (input - 1)) === 0) {
+        if (input > 1) {
             setError('');
             setVisible(true);
         } else {
             setError('Please enter a number that is a power of 2 (e.g., 2, 4, 8, 16).');
             setVisible(false);
         }
+    };
+
+    const handleShuffle = () => {
+        const shuffled = shufflePlayers(players);
+        setPlayers(shuffled);
+        console.log('Players shuffled:', shuffled);
     };
 
     const generateBrackets = (participants) => {
@@ -35,8 +52,8 @@ function TournamentBracket() {
         fetch('/players.json')
             .then((response) => response.json())
             .then((data) => {
-                setPlayers(data); // Store player data
-                setInput(data.length); // Set the number of participants to the number of players
+                setPlayers(data);
+                setInput(data.length);
             })
             .catch((err) => console.error('Error loading players:', err));
     }, []);
@@ -45,40 +62,42 @@ function TournamentBracket() {
         <Div>
             <div className="centered">
                 <label>
-                    Number of teams:
-                    <input type="number" value={input} readOnly />
+                    <h1>Number of players:{input}</h1>
+                    
                 </label>
                 <button onClick={handleClick}>See Brackets</button>
+
                 {error && <p className="error">{error}</p>}
             </div>
             {visible && (
                 <div className="brackets">
                     {rounds.map((round, roundIndex) => (
                         <div key={roundIndex} className="column">
-                            {/* First column: Display player names */}
+                            {/* First column: Display shuffled player names */}
                             {roundIndex === 0
                                 ? Array.from({ length: round }, (_, i) => (
-                                      <input
-                                          key={`${roundIndex}-${i}`}
-                                          value={players[i]?.name || ''} // Display player name or leave blank if not available
-                                          readOnly
-                                      />
-                                  ))
+                                    <input
+                                        key={`${roundIndex}-${i}`}
+                                        value={players[i]?.name || ''} // Display player name or leave blank if not available
+                                        readOnly
+                                    />
+                                ))
                                 : // Other columns: Empty input boxes
-                                  Array.from({ length: round }, (_, i) => (
-                                      <input key={`${roundIndex}-${i}`} />
-                                  ))}
+                                Array.from({ length: round }, (_, i) => (
+                                    <input key={`${roundIndex}-${i}`} />
+                                ))}
                         </div>
                     ))}
                 </div>
             )}
+
+            <button onClick={handleShuffle}>Shuffle Players</button>
         </Div>
     );
 }
 
 export default TournamentBracket;
 
-// Styled Components (Optional, for styling purposes)
 const Div = styled.div`
     .centered {
         text-align: center;
@@ -95,8 +114,8 @@ const Div = styled.div`
     .column {
         display: flex;
         flex-direction: column;
-        gap: 10px;
         justify-content: space-evenly;
+        gap: 10px;
     }
     input {
         padding: 5px;
