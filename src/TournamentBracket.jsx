@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 
 function TournamentBracket() {
@@ -16,15 +16,6 @@ function TournamentBracket() {
         }
     };
 
-    const handleChange = (e) => {
-        const value = parseInt(e.target.value, 10);
-        if (!isNaN(value)) {
-            setInput(value);
-        } else {
-            setInput(0);
-        }
-    };
-
     const generateBrackets = (participants) => {
         const rounds = [];
         let currentRound = participants;
@@ -39,12 +30,23 @@ function TournamentBracket() {
 
     const rounds = generateBrackets(input);
 
+    useEffect(() => {
+        fetch('/players.json')
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Number of players:', data.length); // Logs the number of items in the JSON array
+                setInput(data.length);
+            })
+            .catch((err) => console.error('Error loading players:', err));
+    }, []);
+    
+
     return (
         <Div>
             <div className="centered">
                 <label>
                     Enter number of teams:
-                    <input type="number" onChange={handleChange} value={input} />
+                    <input type="number" value={input} />
                 </label>
                 <button onClick={handleClick}>See Brackets</button>
                 {error && <p className="error">{error}</p>}
