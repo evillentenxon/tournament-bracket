@@ -34,7 +34,7 @@ function InputAndSvg() {
                 {/* SVG Column */}
                 <div className="svg-column">
                     {[...Array(nextCount)].map((_, index) => {
-                        const svgHeight = 50 + 2 * (25 * i); // Dynamic height based on v
+                        const svgHeight = 2 * (25 * i); // Dynamic height based on v
                         return (
                             <svg
                                 key={`svg-${currentCount}-${index}`}
@@ -86,7 +86,6 @@ const Container = styled.div`
         display: flex;
         gap: 10px;
         flex-direction: column;
-        // align-content: space-between;
         justify-content: space-around;
     }
     .svg-column {
@@ -105,7 +104,7 @@ const Container = styled.div`
 
     .tier {
         display: flex;
-        gap: 20px;;
+        gap: 10px;;
     }
 
     .input-list input {
@@ -120,6 +119,6 @@ const Container = styled.div`
         // height: 80px;
         // width: 50px;
         // overflow: visible;
-        // margin-bottom: 20px;
+        margin-bottom: 20px;
     }
 `;
