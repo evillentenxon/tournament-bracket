@@ -1,68 +1,3 @@
-// import React, { useEffect, useState } from 'react'
-// import styled from 'styled-components'
-
-// function Svg() {
-//     const [count, setCount] = useState(0);
-
-//     const handleChange = (e) => {
-//         setCount(Number(e.target.value)); // Ensure the count is treated as a number
-//     }
-
-//     useEffect(() => {
-//         console.log(count);
-//     }, [count]);
-
-//     return (
-//         <Div>
-//             <input 
-//                 type="number" 
-//                 value={count} 
-//                 onChange={handleChange} 
-//                 min="1" // Prevents the user from entering negative numbers or zero
-//             />
-//             <div>
-//                 {[...Array(count)].map((_, index) => (
-//                     <svg key={index}>
-//                         <path
-//                             d="
-//                                 m10 10
-//                                 h100
-//                                 v50
-//                                 h50
-//                                 h-50
-//                                 v50
-//                                 h-100
-//                             "
-//                             stroke="black"
-//                             strokeWidth="2"
-//                             fill="none"
-//                         />
-//                     </svg>
-//                 ))}
-//             </div>
-//         </Div>
-//     )
-// }
-
-// export default Svg
-
-// const Div = styled.div`
-// width: 100vw;
-// height: 100vh;
-
-// input {
-//     margin-bottom: 20px;
-// }
-
-// svg {
-//     height: 200px; /* You can adjust the size of each SVG */
-//     width: 200px;
-//     margin-bottom: 10px; /* Add spacing between SVGs */
-//     display: block;
-// }
-// `
-
-
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -77,28 +12,25 @@ function InputAndSvg() {
         console.log(count);
     }, [count]);
 
-    return (
-        <Container>
+    const renderTiers = (currentCount) => {
+        // Stop rendering when currentCount < 1
+        if (currentCount < 1) return null;
 
-            <div>
-                <input
-                    type="number"
-                    value={count}
-                    onChange={handleChange}
-                    min="1" // Prevents the user from entering negative numbers or zero
-                    placeholder="Enter count"
-                />
-            </div>
-            <div className='tie-sheet'>
+        const nextCount = Math.floor(currentCount / 2);
+
+        return (
+            <div className="tier" key={currentCount}>
+                {/* Input Column */}
                 <div className="input-list">
-                    {[...Array(count)].map((_, index) => (
-                        <input key={index} placeholder={`Input ${index + 1}`} />
+                    {[...Array(currentCount)].map((_, index) => (
+                        <input key={`input-${currentCount}-${index}`} placeholder={`Input ${index + 1}`} />
                     ))}
                 </div>
 
+                {/* SVG Column */}
                 <div className="svg-column">
-                    {[...Array(Math.floor(count / 2))].map((_, index) => (
-                        <svg key={index}>
+                    {[...Array(nextCount)].map((_, index) => (
+                        <svg key={`svg-${currentCount}-${index}`}>
                             <path
                                 d="
                                 m10 10
@@ -116,6 +48,26 @@ function InputAndSvg() {
                         </svg>
                     ))}
                 </div>
+
+                {/* Recursive call for the next tier */}
+                {renderTiers(nextCount)}
+            </div>
+        );
+    };
+
+    return (
+        <Container>
+            <div>
+                <input
+                    type="number"
+                    value={count}
+                    onChange={handleChange}
+                    min="1" // Prevent entering negative numbers or zero
+                    placeholder="Enter count"
+                />
+            </div>
+            <div className="tie-sheet">
+                {renderTiers(count)}
             </div>
         </Container>
     );
@@ -128,7 +80,6 @@ const Container = styled.div`
     padding: 20px;
 
     .input-column, .svg-column {
-        // flex: 1; /* Make columns equal in width */
         display: flex;
         gap: 10px;
     }
@@ -140,14 +91,21 @@ const Container = styled.div`
         border-radius: 5px;
     }
 
-    .tie-sheet{
+    .tie-sheet {
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .tier {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
     }
 
     .input-list input {
         display: block;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         padding: 5px;
         border: 2px solid black;
         border-radius: 5px;
@@ -162,7 +120,7 @@ const Container = styled.div`
     }
 
     svg {
-        height: 80px; /* Adjust size of SVGs */
+        height: 80px;
         width: 50px;
     }
 `;
