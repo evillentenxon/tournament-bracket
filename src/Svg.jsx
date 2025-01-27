@@ -33,16 +33,24 @@ function InputAndSvg() {
 
                 {/* SVG Column */}
                 <div className="svg-column">
-                    {[...Array(nextCount)].map((_, index) => (
-                        <svg key={`svg-${currentCount}-${index}`}>
-                            <path
-                                d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
-                                stroke="black"
-                                strokeWidth="2"
-                                fill="none"
-                            />
-                        </svg>
-                    ))}
+                    {[...Array(nextCount)].map((_, index) => {
+                        const svgHeight = 50 + 2 * (25 * i); // Dynamic height based on v
+                        return (
+                            <svg
+                                key={`svg-${currentCount}-${index}`}
+                                style={{ height: `${svgHeight}px` }}
+                                width="50"
+                                overflow="visible"
+                            >
+                                <path
+                                    d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
+                                    stroke="black"
+                                    strokeWidth="2"
+                                    fill="none"
+                                />
+                            </svg>
+                        );
+                    })}
                 </div>
 
                 {/* Recursive call for the next tier */}
@@ -50,6 +58,7 @@ function InputAndSvg() {
             </div>
         );
     };
+
 
     return (
         <Container>
@@ -84,8 +93,7 @@ const Container = styled.div`
         display: flex;
         gap: 10px;
         flex-direction: column;
-        // align-content: space-between;
-        justify-content: space-evenly;
+        justify-content: space-around;
     }
 
     input[type="number"] {
@@ -109,9 +117,9 @@ const Container = styled.div`
     }
 
     svg {
-        height: 80px;
-        width: 50px;
-        overflow: visible;
+        // height: 80px;
+        // width: 50px;
+        // overflow: visible;
         // margin-bottom: 20px;
     }
 `;
