@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 function InputAndSvg() {
     const [count, setCount] = useState(0);
@@ -12,18 +12,22 @@ function InputAndSvg() {
         console.log(count);
     }, [count]);
 
-    const renderTiers = (currentCount) => {
+    const renderTiers = (currentCount, i = 1) => {
         // Stop rendering when currentCount < 1
         if (currentCount < 1) return null;
 
-        const nextCount = Math.floor(currentCount / 2);
+        const nextCount = Math.floor(currentCount / 2); // Halve the count for the next tier
+        const nextI = i * 2; // Double the value of i for the next tier
 
         return (
             <div className="tier" key={currentCount}>
                 {/* Input Column */}
                 <div className="input-list">
                     {[...Array(currentCount)].map((_, index) => (
-                        <input key={`input-${currentCount}-${index}`} placeholder={`Input ${index + 1}`} />
+                        <input
+                            key={`input-${currentCount}-${index}`}
+                            placeholder={`Input ${index + 1}`}
+                        />
                     ))}
                 </div>
 
@@ -32,15 +36,7 @@ function InputAndSvg() {
                     {[...Array(nextCount)].map((_, index) => (
                         <svg key={`svg-${currentCount}-${index}`}>
                             <path
-                                d="
-                                m10 10
-                                h25
-                                v25
-                                h25
-                                h-25
-                                v25
-                                h-25
-                            "
+                                d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
                                 stroke="black"
                                 strokeWidth="2"
                                 fill="none"
@@ -50,7 +46,7 @@ function InputAndSvg() {
                 </div>
 
                 {/* Recursive call for the next tier */}
-                {renderTiers(nextCount)}
+                {renderTiers(nextCount, nextI)}
             </div>
         );
     };
@@ -66,9 +62,7 @@ function InputAndSvg() {
                     placeholder="Enter count"
                 />
             </div>
-            <div className="tie-sheet">
-                {renderTiers(count)}
-            </div>
+            <div>{renderTiers(count)}</div>
         </Container>
     );
 }
@@ -79,9 +73,19 @@ const Container = styled.div`
     width: 100%;
     padding: 20px;
 
-    .input-column, .svg-column {
+    .input-list{
         display: flex;
         gap: 10px;
+        flex-direction: column;
+        // align-content: space-between;
+        justify-content: space-around;
+    }
+    .svg-column {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+        // align-content: space-between;
+        justify-content: space-evenly;
     }
 
     input[type="number"] {
@@ -91,21 +95,12 @@ const Container = styled.div`
         border-radius: 5px;
     }
 
-    .tie-sheet {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
     .tier {
         display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 20px;;
     }
 
     .input-list input {
-        display: block;
-        margin-bottom: 10px;
         padding: 5px;
         border: 2px solid black;
         border-radius: 5px;
@@ -113,14 +108,10 @@ const Container = styled.div`
         max-width: 200px;
     }
 
-    .svg-column {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
     svg {
         height: 80px;
         width: 50px;
+        overflow: visible;
+        // margin-bottom: 20px;
     }
 `;
