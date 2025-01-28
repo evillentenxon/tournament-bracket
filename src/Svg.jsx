@@ -44,7 +44,6 @@ function InputAndSvg() {
                             >
                                 <path
                                     d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
-                                    stroke="black"
                                     strokeWidth="2"
                                     fill="none"
                                 />
@@ -79,10 +78,12 @@ function InputAndSvg() {
 export default InputAndSvg;
 
 const Container = styled.div`
+    background: linear-gradient(to right, #000033, #330033);
     width: 100%;
+    height: 100vh;
     padding: 20px;
 
-    .input-list{
+    .input-list {
         display: flex;
         gap: 10px;
         flex-direction: column;
@@ -93,6 +94,17 @@ const Container = styled.div`
         gap: 10px;
         flex-direction: column;
         justify-content: space-around;
+
+        svg {
+        stroke: #3399ff;
+        fill: none;
+        margin-bottom: 20px;
+        transition: stroke 0.3s ease;
+
+        &:hover{
+        stroke: #ff3366;
+            }
+        }
     }
 
     input[type="number"] {
@@ -100,25 +112,24 @@ const Container = styled.div`
         padding: 5px;
         border: 2px solid black;
         border-radius: 5px;
+        background: linear-gradient(to right, #330066, #660033);
+        color: white;
+        font-family: 'Orbitron', sans-serif;
     }
 
     .tier {
         display: flex;
-        gap: 10px;;
+        // gap: 10px;
     }
 
     .input-list input {
-        padding: 5px;
-        border: 2px solid black;
+        padding: 10px;
+        border: 2px solid #3399ff;
         border-radius: 5px;
+        background: linear-gradient(to right, #330066, #660033), repeat;
+        color: white;
+        font-family: 'Orbitron', sans-serif;
         width: 100%;
-        max-width: 200px;
-    }
-
-    svg {
-        // height: 80px;
-        // width: 50px;
-        // overflow: visible;
-        margin-bottom: 20px;
+        max-width: 150px;
     }
 `;
