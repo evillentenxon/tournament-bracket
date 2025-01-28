@@ -3,17 +3,30 @@ import styled from "styled-components";
 
 function InputAndSvg() {
     const [count, setCount] = useState(0);
+    const [participants, setParticipants] = useState([]);
 
-    const handleChange = (e) => {
-        setCount(Number(e.target.value)); // Ensure the count is treated as a number
-    };
-
+    // Fetch participants from API
     useEffect(() => {
-        console.log(count);
-    }, [count]);
+        const fetchParticipants = async () => {
+            try {
+                const response = await fetch(
+                    "http://localhost:4000/tour/tournament/678bbdf91664b83433955c74/fetchPaticipants"
+                );
+                const data = await response.json();
+                console.log("API Response:", data);
+                if (data.message === "Participants fetched successfully") {
+                    setParticipants(data.participants);
+                    setCount(data.participants.length); // Set count based on participants
+                }
+            } catch (error) {
+                console.error("Error fetching participants:", error);
+            }
+        };
+
+        fetchParticipants();
+    }, []);
 
     const renderTiers = (currentCount, i = 1) => {
-        // Stop rendering when currentCount < 1
         if (currentCount < 1) return null;
 
         const nextCount = Math.floor(currentCount / 2); // Halve the count for the next tier
@@ -26,7 +39,12 @@ function InputAndSvg() {
                     {[...Array(currentCount)].map((_, index) => (
                         <input
                             key={`input-${currentCount}-${index}`}
-                            placeholder={`Input ${index + 1}`}
+                            value={
+                                participants[index]
+                                    ? participants[index].username
+                                    : `Player ${index + 1}`
+                            }
+                            // readOnly // Inputs are pre-filled and not editable
                         />
                     ))}
                 </div>
@@ -58,18 +76,8 @@ function InputAndSvg() {
         );
     };
 
-
     return (
         <Container>
-            <div>
-                <input
-                    type="number"
-                    value={count}
-                    onChange={handleChange}
-                    min="1" // Prevent entering negative numbers or zero
-                    placeholder="Enter count"
-                />
-            </div>
             <div>{renderTiers(count)}</div>
         </Container>
     );
@@ -78,7 +86,7 @@ function InputAndSvg() {
 export default InputAndSvg;
 
 const Container = styled.div`
-    background: linear-gradient(to right, #000033, #330033);
+    // background: linear-gradient(to right, #000033, #330033);
     width: 100%;
     height: 100vh;
     padding: 20px;
@@ -96,7 +104,7 @@ const Container = styled.div`
         justify-content: space-around;
 
         svg {
-        stroke: #3399ff;
+        stroke: #330066;
         fill: none;
         margin-bottom: 20px;
         transition: stroke 0.3s ease;
@@ -123,11 +131,14 @@ const Container = styled.div`
     }
 
     .input-list input {
+        // box-sizing: border-box;
         padding: 10px;
-        border: 2px solid #3399ff;
+        border: 2px solid #330066;
         border-radius: 5px;
-        background: linear-gradient(to right, #330066, #660033), repeat;
-        color: white;
+        // background: linear-gradient(to right, #330066, #660033), repeat;
+        color: black;
+        // font-weight: bold;
+        // font-size: 23px;
         font-family: 'Orbitron', sans-serif;
         width: 100%;
         max-width: 150px;
