@@ -1,30 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 function InputAndSvg() {
     const [count, setCount] = useState(0);
-    const [participants, setParticipants] = useState([]);
 
-    // Fetch participants from API
-    useEffect(() => {
-        const fetchParticipants = async () => {
-            try {
-                const response = await fetch(
-                    "http://localhost:4000/tour/tournament/678bbdf91664b83433955c74/fetchPaticipants"
-                );
-                const data = await response.json();
-                console.log("API Response:", data);
-                if (data.message === "Participants fetched successfully") {
-                    setParticipants(data.participants);
-                    setCount(data.participants.length); // Set count based on participants
-                }
-            } catch (error) {
-                console.error("Error fetching participants:", error);
-            }
-        };
-
-        fetchParticipants();
-    }, []);
+    const handleChange=(e)=>{
+        setCount(parseInt(e.target.value, 10) || 0);
+        console.log(e.target.value);
+    }
 
     const renderTiers = (currentCount, i = 1) => {
         if (currentCount < 1) return null;
@@ -33,51 +16,48 @@ function InputAndSvg() {
         const nextI = i * 2; // Double the value of i for the next tier
 
         return (
-            <div className="tier" key={currentCount}>
-                {/* Input Column */}
-                <div className="input-list">
-                    {[...Array(currentCount)].map((_, index) => (
-                        <input
-                            key={`input-${currentCount}-${index}`}
-                            value={
-                                participants[index]
-                                    ? participants[index].username
-                                    : `Player ${index + 1}`
-                            }
-                            // readOnly // Inputs are pre-filled and not editable
-                        />
-                    ))}
-                </div>
+                <div className="tier" key={currentCount}>
+                    {/* Input Column */}
+                    <div className="input-list">
+                        {[...Array(currentCount)].map((_, index) => (
+                            <input
+                                key={`input-${currentCount}-${index}`}
+                                defaultValue={`Player ${index + 1}`} 
+                                readOnly // Inputs are pre-filled and not editable
+                            />
+                        ))}
+                    </div>
 
-                {/* SVG Column */}
-                <div className="svg-column">
-                    {[...Array(nextCount)].map((_, index) => {
-                        const svgHeight = 2 * (25 * i); // Dynamic height based on v
-                        return (
-                            <svg
-                                key={`svg-${currentCount}-${index}`}
-                                style={{ height: `${svgHeight}px` }}
-                                width="50"
-                                overflow="visible"
-                            >
-                                <path
-                                    d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
-                                    strokeWidth="2"
-                                    fill="none"
-                                />
-                            </svg>
-                        );
-                    })}
-                </div>
+                    {/* SVG Column */}
+                    <div className="svg-column">
+                        {[...Array(nextCount)].map((_, index) => {
+                            const svgHeight = 2 * (25 * i); // Dynamic height based on v
+                            return (
+                                <svg
+                                    key={`svg-${currentCount}-${index}`}
+                                    style={{ height: `${svgHeight}px` }}
+                                    width="50"
+                                    overflow="visible"
+                                >
+                                    <path
+                                        d={`m10 10 h25 v${25 * i} h25 h-25 v${25 * i} h-25`}
+                                        strokeWidth="2"
+                                        fill="none"
+                                    />
+                                </svg>
+                            );
+                        })}
+                    </div>
 
-                {/* Recursive call for the next tier */}
-                {renderTiers(nextCount, nextI)}
-            </div>
+                    {/* Recursive call for the next tier */}
+                    {renderTiers(nextCount, nextI)}
+                </div>
         );
     };
 
     return (
         <Container>
+            <input type="number" onChange={handleChange} />
             <div>{renderTiers(count)}</div>
         </Container>
     );
